@@ -47,6 +47,8 @@ A production-grade AI-powered chat backend built for App Nation's Senior Softwar
 ```bash
 cp .env.example .env
 # Edit .env and set your values (DATABASE_URL, JWT_SECRET, etc.)
+# Optional: set OPENAI_API_KEY for real AI responses
+# Leave MOCK_AI=true for demo mode (simulated responses, no API key required)
 ```
 
 ### 2. Start Database
@@ -221,6 +223,14 @@ Feature flags are controlled via `feature-flags.json` in the project root. **Cha
 | `AI_TOOLS_ENABLED` | boolean | `true` | Enable mocked tool support (getCurrentWeather) |
 | `CHAT_HISTORY_ENABLED` | boolean | `true` | Full history vs last 50 messages |
 
+### Mock AI Mode
+
+When no real OpenAI API key is available, set `MOCK_AI=true` in `.env` (or leave `OPENAI_API_KEY` unset). The system automatically uses simulated strategies that produce realistic SSE streams and JSON responses — all patterns, middleware, and circuit breaker behavior remain fully exercised.
+
+```bash
+MOCK_AI=true   # auto-detected if OPENAI_API_KEY is missing or placeholder
+```
+
 ### Runtime Flag Change (No Restart)
 
 ```bash
@@ -279,13 +289,22 @@ npm test                  # Run all tests
 npm run test:coverage     # With coverage report
 ```
 
-**44 unit tests** covering:
+**53 tests** covering:
+
+*Unit tests (44):*
 - FeatureFlagService (flag reads, updates, validation)
 - CircuitBreaker (state transitions, threshold, events)
 - Strategy Pattern (history, tools)
 - ChatService (pagination, ownership, flag integration)
 - Auth middleware (JWT validation)
 - Validation middleware (Zod schemas)
+
+*Integration tests (9):*
+- Full middleware chain (AppCheck → Auth → ClientType → Validate → RateLimit → FeatureCheck)
+- Authentication rejection cases (missing/invalid JWT, missing AppCheck)
+- Validation error format and HTTP status codes
+- Feature flags endpoint
+- Consistent error response shape
 
 ---
 

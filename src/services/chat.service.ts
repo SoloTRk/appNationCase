@@ -3,15 +3,12 @@ import { MessageRepository } from '../repositories/message.repository';
 import { FeatureFlagService } from './feature-flag.service';
 import { EventBus } from '../events/event-bus';
 import { AppEvent } from '../events/events';
-import { IHistoryStrategy } from '../strategies/history/history.strategy';
+import { HistoryStrategies } from '../strategies/history/history.strategy';
 import { ApiError } from '../utils/api-error';
 import { PaginatedResult, PaginationOptions } from '../types';
 import { Chat, Message } from '@prisma/client';
 
-export interface HistoryStrategies {
-  full: IHistoryStrategy;
-  limited: IHistoryStrategy;
-}
+export type { HistoryStrategies };
 
 export class ChatService {
   constructor(

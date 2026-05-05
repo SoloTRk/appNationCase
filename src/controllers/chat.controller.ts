@@ -53,7 +53,10 @@ export class ChatController {
 
       await this.completionService.handleCompletion(chatId, userId, message, res);
     } catch (error) {
-      next(error);
+      // SSE stream already ended: error was sent as SSE event, no HTTP response possible.
+      if (!res.headersSent) {
+        next(error);
+      }
     }
   };
 }

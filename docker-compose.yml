@@ -24,6 +24,8 @@ services:
       DATABASE_URL: postgresql://appnation:appnation_dev@db:5432/ai_chat?schema=public
       JWT_SECRET: appnation-production-secret
       PORT: 3000
+      # Set OPENAI_API_KEY here for real AI; leave unset or set MOCK_AI=true for demo mode
+      MOCK_AI: "true"
     depends_on:
       db:
         condition: service_healthy

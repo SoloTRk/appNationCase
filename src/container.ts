@@ -15,6 +15,8 @@ import { CompletionService } from './services/completion.service';
 
 import { StreamingCompletionStrategy } from './strategies/completion/streaming-completion.strategy';
 import { JsonCompletionStrategy } from './strategies/completion/json-completion.strategy';
+import { MockStreamingCompletionStrategy } from './strategies/completion/mock-streaming-completion.strategy';
+import { MockJsonCompletionStrategy } from './strategies/completion/mock-json-completion.strategy';
 import { FullHistoryStrategy } from './strategies/history/full-history.strategy';
 import { LimitedHistoryStrategy } from './strategies/history/limited-history.strategy';
 import { ToolsEnabledStrategy } from './strategies/tools/tools-enabled.strategy';
@@ -48,10 +50,11 @@ export function createContainer() {
   const userRepository = new UserRepository(db);
 
   // 5. Strategies
-  const completionStrategies = {
-    streaming: new StreamingCompletionStrategy(),
-    json: new JsonCompletionStrategy(),
-  };
+  const useMockAI = process.env.MOCK_AI === 'true' || !process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY.startsWith('sk-your');
+
+  const completionStrategies = useMockAI
+    ? { streaming: new MockStreamingCompletionStrategy(), json: new MockJsonCompletionStrategy() }
+    : { streaming: new StreamingCompletionStrategy(), json: new JsonCompletionStrategy() };
 
   const historyStrategies = {
     full: new FullHistoryStrategy(),

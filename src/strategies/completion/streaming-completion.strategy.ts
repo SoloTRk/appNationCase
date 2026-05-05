@@ -15,6 +15,7 @@ export class StreamingCompletionStrategy implements ICompletionStrategy {
     this.sendEvent(res, 'thinking', { status: 'processing' });
 
     let fullText = '';
+    let streamError: Error | null = null;
 
     try {
       const result = streamText({
@@ -51,13 +52,15 @@ export class StreamingCompletionStrategy implements ICompletionStrategy {
         }
       }
     } catch (error) {
-      const message = error instanceof Error && error.name === 'AbortError'
-        ? 'Request timed out'
-        : 'Completion failed';
+      streamError = error instanceof Error ? error : new Error('Completion failed');
+      const message = streamError.name === 'AbortError' ? 'Request timed out' : 'Completion failed';
       this.sendEvent(res, 'error', { message });
     } finally {
       res.end();
     }
+
+    // Re-throw so CircuitBreaker can track failures — response is already closed above.
+    if (streamError) throw streamError;
 
     return fullText;
   }

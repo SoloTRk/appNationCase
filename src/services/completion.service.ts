@@ -8,17 +8,14 @@ import { EventBus } from '../events/event-bus';
 import { AppEvent } from '../events/events';
 import { CircuitBreaker } from '../resilience/circuit-breaker';
 import { ICompletionStrategy } from '../strategies/completion/completion.strategy';
-import { IHistoryStrategy } from '../strategies/history/history.strategy';
+import { HistoryStrategies } from '../strategies/history/history.strategy';
 import { IToolStrategy } from '../strategies/tools/tool.strategy';
+
+export type { HistoryStrategies };
 
 export interface CompletionStrategies {
   streaming: ICompletionStrategy;
   json: ICompletionStrategy;
-}
-
-export interface HistoryStrategies {
-  full: IHistoryStrategy;
-  limited: IHistoryStrategy;
 }
 
 export interface ToolStrategies {
